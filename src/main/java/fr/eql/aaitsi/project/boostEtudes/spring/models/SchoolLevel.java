@@ -8,14 +8,24 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity
-@Getter
-@AllArgsConstructor
-public class SchoolLevel {
+public enum SchoolLevel {
+    CM1("CM1"),
+    CM2("CM2"),
+    SIXIEME("6ème"),
+    CINQUIEME("5ème"),
+    QUATRIEME("4ème"),
+    TROISIEME("3ème"),
+    SECONDE("2nde"),
+    PREMIERE("1ère"),
+    TERMINALE("Terminale");
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private final String displayName;
 
-    private String levelName;
+    SchoolLevel(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 }
