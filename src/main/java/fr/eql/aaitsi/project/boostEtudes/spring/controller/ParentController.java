@@ -1,7 +1,9 @@
 package fr.eql.aaitsi.project.boostEtudes.spring.controller;
 
+import fr.eql.aaitsi.project.boostEtudes.spring.exception.UserException;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.Parent;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.Role;
+import fr.eql.aaitsi.project.boostEtudes.spring.models.UserEntity;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.dto.ParentAddDto;
 import fr.eql.aaitsi.project.boostEtudes.spring.repository.ParentDao;
 import fr.eql.aaitsi.project.boostEtudes.spring.repository.RoleDao;
@@ -12,15 +14,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin("${front.url}")
 public class ParentController {
 
     @Autowired
@@ -73,7 +81,7 @@ public class ParentController {
 
 
 
-   /* @GetMapping(path = "/parents")
+   @GetMapping(path = "/parents")
     public ResponseEntity<List<Parent>> getAllParents() {
 
         List<Parent> parents = parentService.getAllParents();
@@ -88,7 +96,17 @@ public class ParentController {
 
         return new ResponseEntity<>(foundParent, HttpStatus.OK);
 
-    }*/
+    }
+
+    @PutMapping("/update/{userId}")
+    public ResponseEntity<Parent> updateParent(@PathVariable ("userId") Long id, @RequestBody Parent updatedParent) {
+        try {
+            Parent parent = parentService.updateParent(id, updatedParent);
+            return ResponseEntity.ok(parent);
+        } catch (UserException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
 }

@@ -1,12 +1,14 @@
 package fr.eql.aaitsi.project.boostEtudes.spring.service;
 
-import fr.eql.aaitsi.project.boostEtudes.spring.exception.AccountExistsException;
-import fr.eql.aaitsi.project.boostEtudes.spring.models.Parent;
+import fr.eql.aaitsi.project.boostEtudes.spring.models.UserEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface SecurityService extends UserDetailsService {
 
-    Parent save(String username, String password) throws AccountExistsException;
+    public UserEntity getUserByUsername(String username);
+
 
 
 }

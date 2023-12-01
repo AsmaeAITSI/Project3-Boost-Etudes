@@ -5,11 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -20,8 +22,27 @@ import java.util.List;
 public class Parent extends UserEntity {
 
     private String profession;
-    @JsonIgnore
+    /*@JsonIgnore
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    private List<Student> children = new ArrayList<>();
+    private List<Student> children = new ArrayList<>();*/
 
+    @Override
+    public void setPassword(String password) {
+        super.setPassword(password);
+    }
+
+    @Override
+    public void setUsername(String username) {
+        super.setUsername(username);
+    }
+
+    @Override
+    public String getUsername() {
+        return super.getUsername();
+    }
+
+    @Override
+    public String getPassword() {
+        return super.getPassword();
+    }
 }

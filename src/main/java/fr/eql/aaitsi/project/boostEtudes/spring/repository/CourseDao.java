@@ -1,10 +1,9 @@
 package fr.eql.aaitsi.project.boostEtudes.spring.repository;
 
-import fr.eql.aaitsi.project.boostEtudes.spring.models.Student;
+import fr.eql.aaitsi.project.boostEtudes.spring.models.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface StudentDao extends JpaRepository<Student, Long> {
-
+public interface CourseDao extends JpaRepository<Course, Long> {
 }

@@ -29,8 +29,8 @@ public class Payment {
     private PaymentMethod paymentMethod;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+    @JoinColumn(name = "parent_id")
+    private Parent parent;
 
     @ManyToOne
     @JoinColumn(name = "course_id")

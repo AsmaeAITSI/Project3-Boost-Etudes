@@ -17,8 +17,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -35,24 +34,24 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy= InheritanceType.JOINED)
-@DiscriminatorColumn(name="course_type")
-public abstract class Course {
+public class Course {
+
+
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long courseId;
 
-    private String name;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Classroom classroom;
 
-    @ElementCollection(targetClass = Subject.class)
-    @CollectionTable(name = "course_subject",
-            joinColumns = @JoinColumn(name = "course_id"))
-    @Enumerated(EnumType.STRING)
-    private List<Subject> subjects;
+    @ManyToMany( cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "course_subject",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "subject_id"))
+    @JsonIgnore
+    private List<Subject> subjects = new ArrayList<>();
 
     @ElementCollection(targetClass = SchoolLevel.class)
     @CollectionTable(name = "course_school_levels",
@@ -69,6 +68,14 @@ public abstract class Course {
     @OneToMany(mappedBy = "course")
     @JsonIgnore
     private List<Payment> payments = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Parent parent;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
 
 
 }

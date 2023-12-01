@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Entity;
+import java.util.Collection;
 
 @Entity
 @Getter
@@ -15,4 +17,6 @@ import javax.persistence.Entity;
 public class Education extends UserEntity {
 
     private String role;
+
+
 }
