@@ -1,7 +1,5 @@
 package fr.eql.aaitsi.project.boostEtudes.spring.models.dto;
 
-import fr.eql.aaitsi.project.boostEtudes.spring.models.City;
-import fr.eql.aaitsi.project.boostEtudes.spring.models.SchoolLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

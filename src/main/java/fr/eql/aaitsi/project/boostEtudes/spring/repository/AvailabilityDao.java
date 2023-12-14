@@ -11,8 +11,12 @@ import java.util.List;
 
 @Repository
 public interface AvailabilityDao extends JpaRepository<Availability, Long> {
-    @Query("SELECT NEW fr.eql.aaitsi.project.boostEtudes.spring.models.dto.AvailabilityProjection(a.availabilityId, a.day, a.startTime, a.endTime, t.firstname, t.lastname) FROM Availability a JOIN a.teacher t ORDER BY t.lastname ASC, t.firstname ASC")
+    @Query("SELECT NEW fr.eql.aaitsi.project.boostEtudes.spring.models.dto.AvailabilityProjection(" +
+            "a.availabilityId, a.day, a.startTime, a.endTime, t.firstname, t.lastname, s.name) " +
+            "FROM Availability a " +
+            "JOIN a.subjects s " +
+            "JOIN a.teacher t " +
+            "ORDER BY t.lastname ASC, t.firstname ASC")
     List<AvailabilityProjection> findAllProjectedByOrderByTeacherLastnameAscTeacherFirstnameAsc();
-
-
 }
+

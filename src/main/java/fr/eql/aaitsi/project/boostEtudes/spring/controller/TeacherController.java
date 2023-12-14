@@ -1,9 +1,7 @@
 package fr.eql.aaitsi.project.boostEtudes.spring.controller;
 
-import com.sun.istack.logging.Logger;
 import fr.eql.aaitsi.project.boostEtudes.spring.exception.UserException;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.Availability;
-import fr.eql.aaitsi.project.boostEtudes.spring.models.Parent;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.Role;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.Subject;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.Teacher;
@@ -14,7 +12,6 @@ import fr.eql.aaitsi.project.boostEtudes.spring.repository.SubjectDao;
 import fr.eql.aaitsi.project.boostEtudes.spring.repository.TeacherDao;
 import fr.eql.aaitsi.project.boostEtudes.spring.repository.UserDao;
 import fr.eql.aaitsi.project.boostEtudes.spring.service.TeacherService;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +26,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -69,11 +64,9 @@ public class TeacherController {
         if (userDao.existsByUsername(registerTeacher.getEmail())) {
             return new ResponseEntity<>("Username is taken", HttpStatus.BAD_REQUEST);
         }
-
         Teacher teacher = new Teacher();
         teacher.setPassword(passwordEncoder.encode(registerTeacher.getPassword()));
         teacher.setUsername(registerTeacher.getEmail());
-
         teacher.setFirstname(registerTeacher.getFirstname());
         teacher.setLastname(registerTeacher.getLastname());
         teacher.setBirthdate(registerTeacher.getBirthdate());
@@ -82,30 +75,15 @@ public class TeacherController {
         teacher.setMobile(registerTeacher.getMobile());
         teacher.setEmail(registerTeacher.getEmail());
         teacher.setProfession(registerTeacher.getProfession());
-        /*teacher.setSubjects(new ArrayList<>());
-        teacher.getSubjects().addAll(registerTeacher.getSubjects());*/
-        // Check and add existing subjects or create new ones
-        /*Set<Subject> uniqueSubjects = new HashSet<>();*/
         List<Subject> uniqueSubjects = new ArrayList<>();
-
-        // Pour chaque matière dans les matières fournies
         for (Subject subject : registerTeacher.getSubjects()) {
             System.out.println("test");
-            // Vérifier si la matière existe déjà dans la base de données
             Optional<Subject> existingSubjectOptional = subjectDao.findByName(subject.getName());
             Subject existingSubject = existingSubjectOptional.orElse(new Subject(subject.getName()));
-            // Ajouter la matière à la liste des matières uniques
             uniqueSubjects.add(existingSubject);
         }
-
-        // Définir les matières uniques pour l'enseignant
         teacher.setSubjects(uniqueSubjects);
-
         Role role = roleDao.findByName("TEACHER").orElseThrow(() -> new RuntimeException("Role not found"));
-       /* if (!entityManager.contains(role)) {
-            // If the role is detached, merge it within a transaction
-            role = entityManager.merge(role);
-        }*/
         teacher.setRoles(Collections.singletonList(role));
         teacherService.saveTeacher(teacher);
         return new ResponseEntity<>("Username registered successfully", HttpStatus.OK);
@@ -142,7 +120,7 @@ public class TeacherController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    @Transactional
     @PostMapping("/{teacherId}/availability")
     public ResponseEntity<String> addAvailabilityToTeacher(
             @PathVariable Long teacherId,
@@ -152,21 +130,35 @@ public class TeacherController {
             Teacher teacher = teacherDao.findById(teacherId)
                     .orElseThrow(() -> new EntityNotFoundException("Teacher not found with ID: " + teacherId));
 
-            Availability availability = new Availability();
-            availability.setDay(newAvailability.getDay());
-            availability.setStartTime(newAvailability.getStartTime());
-            availability.setEndTime(newAvailability.getEndTime());
+            List<Subject> teacherSubjects = teacher.getSubjects();
+
+            if (teacherSubjects != null && !teacherSubjects.isEmpty()) {
+                for (int i = 0; i < teacherSubjects.size(); i++) {
+                    Subject subject = teacherSubjects.get(i);
+
+                    try {
+                        Availability availability = new Availability();
+                        availability.setDay(newAvailability.getDay());
+                        availability.setStartTime(newAvailability.getStartTime());
+                        availability.setEndTime(newAvailability.getEndTime());
+                        availability.setSubjects(Collections.singletonList(subject));
+                        teacherService.addAvailability(teacherId, availability);
+                    } catch (Exception e) {
+                        // Log or handle the exception
+                        e.printStackTrace();
+                    }
+                }
 
 
-
-            teacherService.addAvailability(teacherId, availability);
-            teacherDao.save(teacher);
-
-            return new ResponseEntity<>("Availability added successfully", HttpStatus.CREATED);
+                teacherDao.save(teacher);
+                return new ResponseEntity<>("Availabilities added successfully", HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>("Teacher has no subjects, unable to add availabilities", HttpStatus.BAD_REQUEST);
+            }
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>("Teacher not found with ID: " + teacherId, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>("An error occurred while adding availability", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("An error occurred while adding availabilities", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @Transactional
@@ -179,6 +171,4 @@ public class TeacherController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
 }

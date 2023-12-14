@@ -53,21 +53,14 @@ public class Course {
     @JsonIgnore
     private List<Subject> subjects = new ArrayList<>();
 
-    @ElementCollection(targetClass = SchoolLevel.class)
-    @CollectionTable(name = "course_school_levels",
-            joinColumns = @JoinColumn(name = "course_id"))
-    @Column(name = "school_level")
-    @Enumerated(EnumType.STRING)
-    private List<SchoolLevel> schoolLevels;
+
 
     private LocalDate courseDate;
     private LocalTime courseStart;
     private LocalTime courseEnd;
     private Double price;
 
-    @OneToMany(mappedBy = "course")
-    @JsonIgnore
-    private List<Payment> payments = new ArrayList<>();
+
 
     @ManyToOne
     @JoinColumn(name = "parent_id")

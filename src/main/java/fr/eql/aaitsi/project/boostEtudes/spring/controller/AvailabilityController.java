@@ -1,13 +1,9 @@
 package fr.eql.aaitsi.project.boostEtudes.spring.controller;
 
 
-import fr.eql.aaitsi.project.boostEtudes.spring.models.Availability;
-import fr.eql.aaitsi.project.boostEtudes.spring.models.dto.AvailabilityDto;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.dto.AvailabilityProjection;
 import fr.eql.aaitsi.project.boostEtudes.spring.service.AvailabilityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
