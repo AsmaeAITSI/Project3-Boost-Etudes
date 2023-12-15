@@ -1,8 +1,10 @@
 package fr.eql.aaitsi.project.boostEtudes.spring.service;
 
+import fr.eql.aaitsi.project.boostEtudes.spring.models.Course;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.dto.CourseRequestDto;
 
 public interface CourseService {
 
-    public void createCourse(CourseRequestDto courseRequest);
+    public Course createCourse(Long availabilityId, Long parentId);
+
 }

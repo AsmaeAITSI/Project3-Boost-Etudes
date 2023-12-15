@@ -22,9 +22,11 @@ import java.util.List;
 public class Parent extends UserEntity {
 
     private String profession;
-    /*@JsonIgnore
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    private List<Student> children = new ArrayList<>();*/
+
+
+    @OneToMany(mappedBy = "parent")
+    @JsonIgnore
+    private List<Course> courses = new ArrayList<>();
 
     @Override
     public void setPassword(String password) {

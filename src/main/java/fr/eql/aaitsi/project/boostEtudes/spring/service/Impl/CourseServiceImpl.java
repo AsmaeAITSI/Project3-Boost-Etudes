@@ -1,34 +1,83 @@
 package fr.eql.aaitsi.project.boostEtudes.spring.service.Impl;
 
+import fr.eql.aaitsi.project.boostEtudes.spring.models.Availability;
+import fr.eql.aaitsi.project.boostEtudes.spring.models.Classroom;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.Course;
+import fr.eql.aaitsi.project.boostEtudes.spring.models.Parent;
+import fr.eql.aaitsi.project.boostEtudes.spring.models.Subject;
+import fr.eql.aaitsi.project.boostEtudes.spring.models.Teacher;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.dto.CourseRequestDto;
+import fr.eql.aaitsi.project.boostEtudes.spring.repository.AvailabilityDao;
+import fr.eql.aaitsi.project.boostEtudes.spring.repository.ClassroomDao;
 import fr.eql.aaitsi.project.boostEtudes.spring.repository.CourseDao;
+import fr.eql.aaitsi.project.boostEtudes.spring.repository.ParentDao;
+import fr.eql.aaitsi.project.boostEtudes.spring.repository.SubjectDao;
+import fr.eql.aaitsi.project.boostEtudes.spring.repository.TeacherDao;
+import fr.eql.aaitsi.project.boostEtudes.spring.service.ClassroomService;
 import fr.eql.aaitsi.project.boostEtudes.spring.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @Service
-public class CourseServiceImpl implements CourseService {
+public class CourseServiceImpl  implements CourseService{
 
     @Autowired
     private CourseDao courseDao;
 
-    public void createCourse(CourseRequestDto courseRequest) {
-        // Effectuez les validations nécessaires avant la création du cours
+    @Autowired
+    private ClassroomService classroomService;
 
+    @Autowired
+    private ClassroomDao classroomDao;
+
+    @Autowired
+    private AvailabilityDao availabilityDao;
+
+    @Autowired
+    private ParentDao parentDao;
+
+
+    @Transactional
+    public Course createCourse(Long availabilityId, Long parentId) {
+        // Chargez l'availability depuis la base de données
+        Availability availability = availabilityDao.findById(availabilityId)
+                .orElseThrow(() -> new EntityNotFoundException("Availability not found"));
+
+        // Chargez le parent depuis la base de données
+        Parent parent = parentDao.findById(parentId)
+                .orElseThrow(() -> new EntityNotFoundException("Parent not found"));
+
+        // Chargez une salle aléatoire non réservée depuis la base de données
+        Classroom classroom = classroomService.findRandomUnreservedClassroom()
+                .orElseThrow(() -> new EntityNotFoundException("No unreserved classroom available"));
+
+        // Créez le cours avec le prix fixe
         Course course = new Course();
-        course.setClassroom(courseRequest.getClassroom());
-        course.setSubjects(courseRequest.getSubjects());
-        course.setCourseDate(courseRequest.getCourseDate());
-        course.setCourseStart(courseRequest.getCourseStart());
-        course.setCourseEnd(courseRequest.getCourseEnd());
+        course.setAvailability(availability);
+        course.setClassroom(classroom);
+        course.setPrice(50.0); // Prix fixe
+        course.setParent(parent);
 
-        // Définissez le prix par défaut à 50 euros si le prix n'est pas spécifié
-        course.setPrice(courseRequest.getPrice() != null ? courseRequest.getPrice() : 50.0);
-        // Ajoutez d'autres champs du cours...
+        // Marquez la salle comme réservée
+        classroom.setIsReserved(true);
+        classroomDao.save(classroom);
 
-        courseDao.save(course);
+        availability.setReserved(true);
+        availabilityDao.save(availability);
+
+        // Sauvegardez le cours dans la base de données
+        return courseDao.save(course);
     }
 
 
+
 }
+
+
+
+
+

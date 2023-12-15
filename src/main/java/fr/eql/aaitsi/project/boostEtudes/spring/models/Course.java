@@ -23,6 +23,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -46,29 +47,18 @@ public class Course {
     @JoinColumn(name = "room_id")
     private Classroom classroom;
 
-    @ManyToMany( cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "course_subject",
-            joinColumns = @JoinColumn(name = "course_id"),
-            inverseJoinColumns = @JoinColumn(name = "subject_id"))
-    @JsonIgnore
-    private List<Subject> subjects = new ArrayList<>();
 
-
-
-    private LocalDate courseDate;
-    private LocalTime courseStart;
-    private LocalTime courseEnd;
     private Double price;
-
-
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Parent parent;
 
-    @ManyToOne
-    @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
+    @OneToOne
+    @JoinColumn(name = "availability_id")
+    private Availability availability;
+
+
 
 
 }

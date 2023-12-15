@@ -15,8 +15,12 @@ import java.util.List;
 @AllArgsConstructor
 public class CourseRequestDto {
 
-    private Classroom classroom;
-    private List<Subject> subjects;
+    private Integer roomNumber;
+    private String parentFirstname;
+    private String parentLastname;
+    private String teacherFirstname;
+    private String teacherLastname;
+    private String subject;
     private LocalDate courseDate;
     private LocalTime courseStart;
     private LocalTime courseEnd;

@@ -15,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -34,16 +36,21 @@ public class Availability {
     private LocalDate day;
     private LocalTime startTime;
     private LocalTime endTime;
+    private boolean isReserved;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")
+    @JsonIgnore
     private Teacher teacher;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "availability_subject",
-            joinColumns = @JoinColumn(name = "availability_id"),
-            inverseJoinColumns = @JoinColumn(name = "subject_id"))
-    private List<Subject> subjects = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "subject_id")
+    @JsonIgnore
+    private Subject subject;
+
+
+    @OneToOne(mappedBy = "availability")
+    private Course course;
 
 
 

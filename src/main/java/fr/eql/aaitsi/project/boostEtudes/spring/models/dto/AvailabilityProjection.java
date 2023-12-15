@@ -23,6 +23,10 @@ public class AvailabilityProjection {
     String TeacherFirstname;
     String TeacherLastname;
     String subjects;
+    Boolean isReserved;
+
+
+
 
 
 

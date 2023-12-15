@@ -135,20 +135,18 @@ public class TeacherController {
             if (teacherSubjects != null && !teacherSubjects.isEmpty()) {
                 for (int i = 0; i < teacherSubjects.size(); i++) {
                     Subject subject = teacherSubjects.get(i);
-
                     try {
                         Availability availability = new Availability();
                         availability.setDay(newAvailability.getDay());
                         availability.setStartTime(newAvailability.getStartTime());
                         availability.setEndTime(newAvailability.getEndTime());
-                        availability.setSubjects(Collections.singletonList(subject));
+                        availability.setSubject(subject); // Utilisez le sujet de l'itération actuelle
                         teacherService.addAvailability(teacherId, availability);
                     } catch (Exception e) {
                         // Log or handle the exception
                         e.printStackTrace();
                     }
                 }
-
 
                 teacherDao.save(teacher);
                 return new ResponseEntity<>("Availabilities added successfully", HttpStatus.CREATED);
@@ -161,6 +159,7 @@ public class TeacherController {
             return new ResponseEntity<>("An error occurred while adding availabilities", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @Transactional
     @GetMapping("/{teacherId}/availabilities")
     public ResponseEntity<List<AvailabilityDto>> getAvailabilitiesByTeacher(@PathVariable Long teacherId) {

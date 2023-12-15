@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,4 +59,14 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     public List<AvailabilityProjection> getAllAvailabilitiesWithTeacherInfo() {
         return availabilityDao.findAllProjectedByOrderByTeacherLastnameAscTeacherFirstnameAsc();
     }
+
+
+    @Transactional
+    @Override
+    public void deleteOtherUnreservedAvailabilities(Long teacherId, LocalDate day, LocalTime startTime, Long availabilityId) {
+        List<Availability> otherUnreservedAvailabilities = availabilityDao.findOtherUnreservedAvailabilities(teacherId, day, startTime, availabilityId);
+
+        availabilityDao.deleteAll(otherUnreservedAvailabilities);
+    }
+
 }
