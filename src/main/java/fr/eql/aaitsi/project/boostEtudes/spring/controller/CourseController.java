@@ -2,7 +2,8 @@ package fr.eql.aaitsi.project.boostEtudes.spring.controller;
 
 import fr.eql.aaitsi.project.boostEtudes.spring.models.Availability;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.Course;
-import fr.eql.aaitsi.project.boostEtudes.spring.models.dto.CourseRequestDto;
+
+import fr.eql.aaitsi.project.boostEtudes.spring.models.dto.CourseResponseDto;
 import fr.eql.aaitsi.project.boostEtudes.spring.repository.AvailabilityDao;
 import fr.eql.aaitsi.project.boostEtudes.spring.service.AvailabilityService;
 import fr.eql.aaitsi.project.boostEtudes.spring.service.CourseService;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 
 @RestController
@@ -52,5 +55,12 @@ public class CourseController {
 
         // Retourner le cours créé en réponse
         return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
+    }
+
+
+    @GetMapping("/parent/{parentId}")
+    public ResponseEntity<List<CourseResponseDto>> getCoursesByParent(@PathVariable Long parentId) {
+        List<CourseResponseDto> courses = courseService.getCoursesByParent(parentId);
+        return ResponseEntity.ok(courses);
     }
 }

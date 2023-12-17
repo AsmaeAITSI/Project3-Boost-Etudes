@@ -7,6 +7,7 @@ import fr.eql.aaitsi.project.boostEtudes.spring.models.Parent;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.Subject;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.Teacher;
 import fr.eql.aaitsi.project.boostEtudes.spring.models.dto.CourseRequestDto;
+import fr.eql.aaitsi.project.boostEtudes.spring.models.dto.CourseResponseDto;
 import fr.eql.aaitsi.project.boostEtudes.spring.repository.AvailabilityDao;
 import fr.eql.aaitsi.project.boostEtudes.spring.repository.ClassroomDao;
 import fr.eql.aaitsi.project.boostEtudes.spring.repository.CourseDao;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl  implements CourseService{
@@ -71,6 +73,13 @@ public class CourseServiceImpl  implements CourseService{
 
         // Sauvegardez le cours dans la base de données
         return courseDao.save(course);
+    }
+
+    public List<CourseResponseDto> getCoursesByParent(Long parentId) {
+        List<Course> courses = courseDao.getCoursesByParentId(parentId);
+        return courses.stream()
+                .map(CourseResponseDto::fromCourse)
+                .collect(Collectors.toList());
     }
 
 
